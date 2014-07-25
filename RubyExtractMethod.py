@@ -18,7 +18,9 @@ class RubyExtractMethodCommand(sublime_plugin.TextCommand):
 
         method_name, method_arguments = (split_input[0], ", ".join(split_input[1:]))
 
-        method_signature = "%s(%s)" % (method_name, method_arguments)
+        method_signature = "%s" % method_name
+        if method_arguments:
+            method_signature += "(%s)" % method_arguments
         selected_region = self.get_current_region()
         method_body = self.get_region_text(selected_region)
 
