@@ -11,15 +11,20 @@ from .Edit import Edit as Edit
 class RubyExtractMethodCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         self.edit = edit
-        self.view.window().show_input_panel("Please enter a name for the method: ", "", self.create_new_method, None, None)
+        self.view.window().show_input_panel("Enter a method signature, format name:arg1:arg2:argn : ", "", self.create_new_method, None, None)
 
-    def create_new_method(self, method_name):
+    def create_new_method(self, user_input):
+        split_input = user_input.split(":")
+
+        method_name, method_arguments = (split_input[0], ", ".join(split_input[1:]))
+
+        method_signature = "%s(%s)" % (method_name, method_arguments)
         selected_region = self.get_current_region()
         method_body = self.get_region_text(selected_region)
 
-        self.replace_region_content_with_method_name(selected_region, method_name)
+        self.replace_region_content_with_method_name(selected_region, method_signature)
 
-        new_method = self.build_new_method(method_name, method_body)
+        new_method = self.build_new_method(method_signature, method_body)
         sublime.set_clipboard(new_method)
         self.display_message("The method " + method_name + " is now in your clipboard. Use your keybinding for paste-with indent (default: Shift+Ctrl+V) to paste it into your code.")
 
